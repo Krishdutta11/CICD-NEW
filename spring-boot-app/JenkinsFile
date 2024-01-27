@@ -17,7 +17,7 @@ pipeline {
   steps {
     sh 'ls -ltr'
     // Update the path to match your repository structure
-    sh 'cd CICD-NEW/spring-boot-app && mvn clean package'
+    sh 'cd spring-boot-app && mvn clean package'
   }
 }
     stage('Static Code Analysis') {
