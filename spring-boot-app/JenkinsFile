@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                sh 'echo "Checking out the code"'
+                sh 'echo passed'
                 // Uncomment and fix the Git checkout command if needed
                 // git branch: 'main', url: 'https://github.com/iam-veeramalla/Jenkins-Zero-To-Hero.git'
             }
@@ -59,13 +59,9 @@ pipeline {
                             git config user.name "Krishdutta11"
                             BUILD_NUMBER=${BUILD_NUMBER}
 
-                            # Debug: Print current directory and contents
-                            pwd
-                            ls -R
-
                             # Update the path to match your repository structure
-                            sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifest/deployment.yml
-                            cat spring-boot-app-manifest/deployment.yml  # Debug: Print the file content
+                            sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" CICD-NEW/spring-boot-manifest/deployment.yml
+                            cat CICD-NEW/spring-boot-manifest/deployment.yml  # Debug: Print the file content
                             git add .
                             git commit -m "Update deployment image to version ${BUILD_NUMBER}"
 
