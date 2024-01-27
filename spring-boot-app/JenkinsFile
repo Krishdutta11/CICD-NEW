@@ -47,38 +47,31 @@ pipeline {
             }
         }
         stage('Update Deployment File') {
-            environment {
-                GIT_REPO_NAME = "CICD-NEW"
-                GIT_USER_NAME = "Krishdutta11"
-            }
-            steps {
-                withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-                    script {
-                        sh """
-                            git config user.email "krishnakali.dutta1177@gmail.com"
-                            git config user.name "Krishdutta11"
-                            BUILD_NUMBER=${BUILD_NUMBER}
+    environment {
+        GIT_REPO_NAME = "CICD-NEW"
+        GIT_USER_NAME = "Krishdutta11"
+    }
+    steps {
+        withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+            script {
+                sh '''
+                    git config user.email "krishnakali.dutta1177@gmail.com"
+                    git config user.name "Krishdutta11"
+                    BUILD_NUMBER=${BUILD_NUMBER}
 
-                            # Debug: Print current directory and contents
-                            pwd
-                            ls -R
+                    # Debug: Print current directory and contents
+                    pwd
+                    ls -R
 
-                            # Update the path to match your repository structure
-                            sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifest/deployment.yml
-                            git add .
-                            git commit -m "Update deployment image to version ${BUILD_NUMBER}"
+                    # Update the path to match your repository structure
+                    sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifest/deployment.yml
+                    cat spring-boot-app-manifest/deployment.yml  # Debug: Print the file content
+                    git add .
+                    git commit -m "Update deployment image to version ${BUILD_NUMBER}"
 
-                            # Debug: Print git status
-                            git status
-
-                            # Debug: Print git log
-                            git log -n 5
-
-                            # Use Jenkins GitHub plugin for authenticated push
-                            git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
-                        """
-                    }
-                }
+                    # Use Jenkins GitHub plugin for authenticated push
+                    git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+                '''
             }
         }
     }
