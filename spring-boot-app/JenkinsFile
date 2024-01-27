@@ -2,20 +2,21 @@ pipeline {
   agent {
     docker {
       image 'abhishekf5/maven-abhishek-docker-agent:v1'
-      args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
+      args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
     }
   }
   stages {
     stage('Checkout') {
       steps {
         sh 'echo passed'
-        //git branch: 'main', url: 'https://github.com/iam-veeramalla/Jenkins-Zero-To-Hero.git'
+        // Uncomment and fix the Git checkout command if needed
+        // git branch: 'main', url: 'https://github.com/iam-veeramalla/Jenkins-Zero-To-Hero.git'
       }
     }
     stage('Build and Test') {
       steps {
         sh 'ls -ltr'
-        // build the project and create a JAR file
+        // Ensure the directory structure is correct and exists
         sh 'cd CICD-NEW/spring-boot-app && mvn clean package'
       }
     }
@@ -32,6 +33,7 @@ pipeline {
     stage('Build and Push Docker Image') {
       environment {
         DOCKER_IMAGE = "krishdutta1177/ultimate-cicd:${BUILD_NUMBER}"
+        // Ensure REGISTRY_CREDENTIALS is used if needed
         REGISTRY_CREDENTIALS = credentials('docker-cred')
       }
       steps {
@@ -45,25 +47,26 @@ pipeline {
       }
     }
     stage('Update Deployment File') {
-            environment {
-                GIT_REPO_NAME = "CICD-NEW"
-                GIT_USER_NAME = "Krishdutta11"
-            }
-            steps {
-                withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-                    script {
-                        sh '''
-                            git config user.email "krishnakali.dutta1177@gmail.com"
-                            git config user.name "Krishdutta11"
-                            BUILD_NUMBER=${BUILD_NUMBER}
-                            sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" CICD-NEW/spring-boot-app-manifest/deployment.yml
-                            git add .
-                            git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-                            git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
-                        '''
-                    }
-                }
-            }
+      environment {
+        GIT_REPO_NAME = "CICD-NEW"
+        GIT_USER_NAME = "Krishdutta11"
+      }
+      steps {
+        withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+          script {
+            sh '''
+              git config user.email "krishnakali.dutta1177@gmail.com"
+              git config user.name "Krishdutta11"
+              BUILD_NUMBER=${BUILD_NUMBER}
+              sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" CICD-NEW/spring-boot-app-manifest/deployment.yml
+              git add .
+              git commit -m "Update deployment image to version ${BUILD_NUMBER}"
+              # Use Jenkins GitHub plugin for authenticated push
+              git push origin HEAD:main
+            '''
+          }
         }
+      }
     }
+  }
 }
