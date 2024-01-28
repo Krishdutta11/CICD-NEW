@@ -65,6 +65,8 @@ pipeline {
                             sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifest/deployment.yml
                             cat spring-boot-app-manifest/deployment.yml  # Debug: Print the file content
                             git status  # Debug: Print the git status
+                            git add .
+                            git commit -m "Update deployment image to version ${BUILD_NUMBER}"
 
                             # Add debug information about the repository URL
                             echo "Git Repo URL: https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git"
