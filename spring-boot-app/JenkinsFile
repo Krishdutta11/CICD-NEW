@@ -46,31 +46,34 @@ pipeline {
                 }
             }
         }
-        stage('Update Deployment File') {
-            environment {
-                GIT_REPO_NAME = "CICD-NEW"
-                GIT_USER_NAME = "Krishdutta11"
-            }
-            steps {
-                withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-                    script {
-                        sh """
-                            git config user.email "krishnakali.dutta1177@gmail.com"
-                            git config user.name "Krishdutta11"
-                            BUILD_NUMBER=${BUILD_NUMBER}
+        
+stage('Update Deployment File') {
+    environment {
+        GIT_REPO_NAME = "CICD-NEW"
+        GIT_USER_NAME = "Krishdutta11"
+    }
+    steps {
+        withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+            script {
+                sh '''
+                    echo "Updating deployment file"
+                    git config user.email "krishnakali.dutta1177@gmail.com"
+                    git config user.name "Krishdutta11"
+                    BUILD_NUMBER=${BUILD_NUMBER}
 
-                            # Update the path to match your repository structure
-                            sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifest/deployment.yml
-                            cat spring-boot-app-manifest/deployment.yml  # Debug: Print the file content
-                            git add .
-                            git commit -m "Update deployment image to version ${BUILD_NUMBER}"
+                    # Update the path to match your repository structure
+                    sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifest/deployment.yml
+                    cat spring-boot-app-manifest/deployment.yml  # Debug: Print the file content
+                    git status  # Debug: Print the git status
 
-                            # Use Jenkins GitHub plugin for authenticated push
-                            git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
-                        """
-                    }
-                }
+                    # Add debug information about the repository URL
+                    echo "Git Repo URL: https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git"
+                    
+                    # Try pushing with -v for more verbose output
+                    git push -v https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+                '''
             }
         }
     }
+}
 }
