@@ -62,6 +62,7 @@ pipeline {
                             BUILD_NUMBER=${BUILD_NUMBER}
 
                             # Update the path to match your repository structure
+                            cat spring-boot-app-manifest/deployment.yml  # Debug: Print the file content
                             sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifest/deployment.yml
                             cat spring-boot-app-manifest/deployment.yml  # Debug: Print the file content
                             git status  # Debug: Print the git status
