@@ -60,8 +60,8 @@ pipeline {
                             BUILD_NUMBER=${BUILD_NUMBER}
 
                             # Update the path to match your repository structure
-                            sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" CICD-NEW/spring-boot-manifest/deployment.yml
-                            cat CICD-NEW/spring-boot-manifest/deployment.yml  # Debug: Print the file content
+                            sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-manifest/deployment.yml
+                            cat spring-boot-manifest/deployment.yml  # Debug: Print the file content
                             git add .
                             git commit -m "Update deployment image to version ${BUILD_NUMBER}"
 
